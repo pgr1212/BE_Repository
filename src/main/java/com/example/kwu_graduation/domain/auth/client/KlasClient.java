@@ -36,7 +36,7 @@ public class KlasClient {
                 .retrieve()
                 .toEntity(String.class);
 
-        String cookie = extractCookie(securityResponse.getHeaders());
+        String securityCookie = extractCookie(securityResponse.getHeaders());
         String publicKey = extractPublicKey(securityResponse.getBody());
         String loginToken = createLoginToken(studentId, password, publicKey);
 
@@ -50,7 +50,7 @@ public class KlasClient {
                 .uri("/usr/cmn/login/LoginConfirm.do")
                 .contentType(MediaType.parseMediaType("application/json;charset=utf-8"))
                 .header("X-Requested-With", "XMLHttpRequest")
-                .header(HttpHeaders.COOKIE, cookie)
+                .header(HttpHeaders.COOKIE, securityCookie)
                 .body(loginConfirmBody)
                 .retrieve()
                 .toEntity(String.class);
@@ -59,7 +59,13 @@ public class KlasClient {
             throw new IllegalStateException("KLAS 로그인에 실패했습니다.");
         }
 
-        return cookie;
+        String finalCookie = mergeCookies(securityCookie, loginResponse.getHeaders());
+
+        System.out.println("LoginConfirm Body = " + loginResponse.getBody());
+        System.out.println("LoginConfirm Set-Cookie = " + loginResponse.getHeaders().get(HttpHeaders.SET_COOKIE));
+        System.out.println("Final Cookie = " + finalCookie);
+
+        return finalCookie;
     }
 
     private String extractCookie(HttpHeaders headers) {
@@ -69,24 +75,41 @@ public class KlasClient {
             throw new IllegalStateException("KLAS 응답에서 Set-Cookie를 찾을 수 없습니다.");
         }
 
-        Map<String, String> cookieMap = setCookies.stream()
+        return setCookies.stream()
                 .map(cookie -> cookie.split(";", 2)[0])
-                .filter(cookie -> cookie.startsWith("SESSION=") || cookie.startsWith("WMONID="))
-                .map(cookie -> cookie.split("=", 2))
+                .filter(cookie -> cookie.contains("="))
+                .collect(Collectors.joining("; ", "", ";"));
+    }
+
+    private String mergeCookies(String originalCookie, HttpHeaders headers) {
+        Map<String, String> cookieMap = cookieStringToMap(originalCookie);
+
+        List<String> setCookies = headers.get(HttpHeaders.SET_COOKIE);
+
+        if (setCookies != null) {
+            setCookies.stream()
+                    .map(cookie -> cookie.split(";", 2)[0])
+                    .filter(cookie -> cookie.contains("="))
+                    .map(cookie -> cookie.split("=", 2))
+                    .forEach(arr -> cookieMap.put(arr[0], arr[1]));
+        }
+
+        return cookieMap.entrySet().stream()
+                .map(entry -> entry.getKey() + "=" + entry.getValue())
+                .collect(Collectors.joining("; ", "", ";"));
+    }
+
+    private Map<String, String> cookieStringToMap(String cookie) {
+        return List.of(cookie.split(";")).stream()
+                .map(String::trim)
+                .filter(value -> !value.isBlank())
+                .filter(value -> value.contains("="))
+                .map(value -> value.split("=", 2))
                 .collect(Collectors.toMap(
                         arr -> arr[0],
                         arr -> arr[1],
                         (oldValue, newValue) -> newValue
                 ));
-
-        String session = cookieMap.get("SESSION");
-        String wmonid = cookieMap.get("WMONID");
-
-        if (session == null || wmonid == null) {
-            throw new IllegalStateException("SESSION 또는 WMONID 쿠키를 찾을 수 없습니다.");
-        }
-
-        return "SESSION=" + session + "; WMONID=" + wmonid + ";";
     }
 
     private String extractPublicKey(String responseBody) {
