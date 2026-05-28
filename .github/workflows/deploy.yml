@@ -1,29 +1,27 @@
 name: Spring Boot & Gradle CI/CD
 
 on:
-  push:
+  push: # 깃허브 main 브랜치에 push가 됐을 때 실행
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
 
 permissions:
   contents: read
-
 # 환경 변수 설정
 env:
-  S3_BUCKET_NAME: deploystudy-github-action
+  S3_BUCKET_NAME: kwu-graduation-github-actions
   ZIP_FILE_NAME: deploy-package.zip
-  APPLICATION_NAME: deploystudy  # AWS CodeDeploy 애플리케이션 이름
-  DEPLOYMENT_GROUP_NAME: deploystudydeploygroup  # AWS CodeDeploy 배포 그룹 이름
 
 jobs:
   build:
+
     runs-on: ubuntu-latest
 
     steps:
       # 저장소 코드 가져오기
       - name: Checkout Source Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
       # JDK 17 설치
       - name: Set up JDK 17
@@ -54,22 +52,13 @@ jobs:
       - name: Copy Jar file to deploy directory
         run: cp ./build/libs/*.jar ./deploy
 
-      # appspec.yml 복사
-      - name: Copy appspec.yml to deploy directory
-        run: cp appspec.yml ./deploy
-
-      # 배포 스크립 복사
-      - name: Copy deploy script to deploy directory
-        run: cp ./scripts/*.sh ./deploy
-
       # ZIP 파일 생성
       - name: Compress deploy files
         run: |
           cd deploy
           zip -r ../$ZIP_FILE_NAME .
-        shell: bash
 
-      # AWS 인증 설정
+        # AWS 인증 설정
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -77,15 +66,6 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ap-northeast-2
 
-      # S3에 업로드
+        # S3에 업로드
       - name: Upload to S3
         run: aws s3 cp --region ap-northeast-2 ./$ZIP_FILE_NAME s3://$S3_BUCKET_NAME/
-
-      # AWS CodeDeploy 배포 실행
-      - name: Deploy to AWS CodeDeploy
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        run: |
-          aws deploy create-deployment \
-            --application-name $APPLICATION_NAME \
-            --deployment-group-name $DEPLOYMENT_GROUP_NAME \
-            --s3-location bucket=$S3_BUCKET_NAME,bundleType=zip,key=$ZIP_FILE_NAME
