@@ -10,7 +10,8 @@ public class CorsConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
                 .allowedOrigins(
-                        "http://localhost:5173" // Vite
+                        "http://localhost:5173", // Vite
+                        "https://likelion-kwu-14th-team2.vercel.app/" // 프론트엔드 배포주소
                 )
                 .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
