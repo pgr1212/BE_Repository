@@ -43,7 +43,7 @@ jobs:
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.KEY }}
           source: "build/libs/*SNAPSHOT.jar" # 빌드된 jar 파일 경로
-          target: "/home/ubuntu/my-app"      # EC2 내부 복사할 위치
+          target: "/home/ubuntu/kwu-graduation"      # EC2 내부 복사할 위치
           strip_components: 2                # 저장 시 'build/libs/' 폴더 구조 생략
 
       # 6. SSH로 EC2에 접속해서 deploy.sh 실행 (추가됨)
@@ -54,5 +54,5 @@ jobs:
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.KEY }}
           script: |
-            cd /home/ubuntu/my-app
+            cd /home/ubuntu/kwu-graduation
             ./deploy.sh
