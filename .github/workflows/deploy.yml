@@ -1,71 +1,58 @@
-name: Spring Boot & Gradle CI/CD
+name: Spring Boot CI/CD without CodeDeploy
 
 on:
-  push: # 깃허브 main 브랜치에 push가 됐을 때 실행
+  push:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
 
-permissions:
-  contents: read
-# 환경 변수 설정
-env:
-  S3_BUCKET_NAME: kwu-graduation-github-actions
-  ZIP_FILE_NAME: deploy-package.zip
-
 jobs:
-  build:
-
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      # 저장소 코드 가져오기
+      # 1. 저장소 코드 가져오기 (v3 -> v4로 최신화)
       - name: Checkout Source Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      # JDK 17 설치
+      # 2. JDK 17 세팅 (기존 설정 유지)
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
 
-      # 시크릿에서 application.yml 파일 생성
+      # 3. 시크릿에서 application.yml 파일 생성 (기존 설정 유지)
       - name: Create application.yml
         run: |
           mkdir -p src/main/resources
           echo "${{ secrets.APPLICATION_YML }}" > src/main/resources/application.yml
 
-      # 실행 권한 부여 & 빌드 실행
+      # 4. Gradle 실행 권한 부여 & 빌드
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      # test 제외 빌드
       - name: Build with Gradle
         run: ./gradlew clean build --exclude-task test
 
-      # 배포용 디렉토리 생성
-      - name: Create deploy directory
-        run: mkdir -p deploy
-
-      # 빌드된 JAR 파일 복사
-      - name: Copy Jar file to deploy directory
-        run: cp ./build/libs/*.jar ./deploy
-
-      # ZIP 파일 생성
-      - name: Compress deploy files
-        run: |
-          cd deploy
-          zip -r ../$ZIP_FILE_NAME .
-
-        # AWS 인증 설정
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
+      # 5. SCP로 빌드된 JAR 파일을 EC2로 직접 전송 (추가됨)
+      - name: Copy JAR to EC2
+        uses: appleboy/scp-action@master
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ap-northeast-2
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.KEY }}
+          source: "build/libs/*SNAPSHOT.jar" # 빌드된 jar 파일 경로
+          target: "/home/ubuntu/my-app"      # EC2 내부 복사할 위치
+          strip_components: 2                # 저장 시 'build/libs/' 폴더 구조 생략
 
-        # S3에 업로드
-      - name: Upload to S3
-        run: aws s3 cp --region ap-northeast-2 ./$ZIP_FILE_NAME s3://$S3_BUCKET_NAME/
+      # 6. SSH로 EC2에 접속해서 deploy.sh 실행 (추가됨)
+      - name: Execute Deploy Script on EC2
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.KEY }}
+          script: |
+            cd /home/ubuntu/my-app
+            ./deploy.sh
