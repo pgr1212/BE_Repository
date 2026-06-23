@@ -1,6 +1,6 @@
 package com.example.kwu_graduation.domain.requirements.hakbun23.controller;
 
-import com.example.kwu_graduation.domain.grade.dto.CreditSummaryResponse;
+import com.example.kwu_graduation.domain.requirements.hakbun23.dto.RequirementCheckRequest;
 import com.example.kwu_graduation.domain.requirements.hakbun23.dto.RequirementCheckResponse;
 import com.example.kwu_graduation.domain.requirements.hakbun23.service.RequirementService;
 import lombok.RequiredArgsConstructor;
@@ -15,9 +15,9 @@ public class RequirementController {
 
     @PostMapping("/check")
     public RequirementCheckResponse check(
-            @RequestParam(defaultValue = "false") boolean isDoubleMajor,
-            @RequestBody CreditSummaryResponse creditSummary
+            @RequestParam String department,
+            @RequestBody RequirementCheckRequest request
     ) {
-        return requirementService.check(isDoubleMajor, creditSummary);
+        return requirementService.check(department, request);
     }
 }
