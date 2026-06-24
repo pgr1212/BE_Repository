@@ -17,4 +17,11 @@ public class KlasGradeController {
     ) {
         return klasGradeService.getSemesterGrades(cookie);
     }
+
+    @GetMapping("/summary")
+    public String getGradeSummary(
+            @RequestHeader("Klas-Cookie") String cookie
+    ) {
+        return klasGradeService.getGradeSummary(cookie);
+    }
 }

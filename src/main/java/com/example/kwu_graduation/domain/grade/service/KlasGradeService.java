@@ -13,4 +13,8 @@ public class KlasGradeService {
     public String getSemesterGrades(String cookie) {
         return klasGradeClient.getSemesterGrades(cookie);
     }
+
+    public String getGradeSummary(String cookie) {
+        return klasGradeClient.getGradeSummary(cookie);
+    }
 }
