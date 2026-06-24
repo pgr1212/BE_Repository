@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
  * department: jeongyung(정보융합학부) | computer(컴퓨터정보공학부) | software(소프트웨어학부)
  */
 @RestController("requirementController2023")
-@RequestMapping("/api/klas/requirements/2023")
+@RequestMapping("/api/klas/requirements/2020-2023")
 @RequiredArgsConstructor
 public class RequirementController {
 
