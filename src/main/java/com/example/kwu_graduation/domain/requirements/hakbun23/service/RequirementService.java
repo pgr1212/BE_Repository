@@ -1,201 +1,114 @@
 package com.example.kwu_graduation.domain.requirements.hakbun23.service;
 
-import com.example.kwu_graduation.domain.grade.dto.CreditSummaryResponse;
-import com.example.kwu_graduation.domain.grade.dto.KlasSubjectGradeResponse;
-import com.example.kwu_graduation.domain.requirements.hakbun23.dto.RequirementCheckRequest;
-import com.example.kwu_graduation.domain.requirements.hakbun23.dto.RequirementCheckResponse;
-import com.example.kwu_graduation.domain.requirements.hakbun23.dto.RequirementItem;
+import com.example.kwu_graduation.domain.requirements.hakbun23.dto.EngineeringRequirement;
+import com.example.kwu_graduation.domain.requirements.hakbun23.dto.RequirementResponse;
+import com.example.kwu_graduation.domain.requirements.hakbun23.dto.SubMajorRequirement;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.List;
 
-@Service
+/**
+ * 2020~2023학번(20~23학번 공통) 졸업요건 조회. 학사 정책 값을 그대로 상수로 담아 학과별로 내려준다.
+ * department: jeongyung(정보융합학부) | computer(컴퓨터정보공학부) | software(소프트웨어학부)
+ *
+ * <p>※ 「Ⅱ-1 수강신청자료집 전체.pdf」, 「2023학번 졸업요건.pdf」 기준으로 작성.
+ * 아래 두 항목은 학과 확인이 필요함(머지 전 재검토 권장):
+ * 1) 컴퓨터정보공학부 TOPCIT 응시 필수 여부 - 자료상 소프트웨어학부와 함께 적용 대상으로 보이나
+ *    기존 코드엔 빠져있었음.
+ * 2) 소프트웨어학부 졸업논문은 "졸업논문/졸업작품 중 택1"이 아니라 "졸업논문(작품) '가' 판정"이
+ *    별도 필수 요건임 - graduationProjectOptions 필드로는 이 뉘앙스가 완전히 표현되지 않아
+ *    additionalRequirements 텍스트로만 안내함.
+ */
+@Service("requirementService2023")
 public class RequirementService {
 
-    private static final int CULTURE_REQUIRED = 22;
-    private static final int MAJOR_SINGLE_REQUIRED = 60;
-    private static final int MAJOR_DOUBLE_REQUIRED = 54;
-    private static final int TOTAL_REQUIRED = 133;
+    private static final int ADMISSION_YEAR = 2023; // 2020~2023학번 공통 수치
+    private static final String COLLEGE = "인공지능융합대학";
 
-    // ===== 공학프로그램 공통 (컴퓨터정보공학부, 소프트웨어학부 둘 다 사용) =====
+    private static final int TOTAL_CREDIT = 133;
+    private static final int MAJOR_CREDIT = 60; // 다전공 이수 시 54로 하향(아래 additionalRequirements 안내)
+    private static final int LIBERAL_ARTS_CREDIT = 22;
+    private static final int BALANCE_CREDIT = 22; // 필수교양(광운인되기 1학점, 폐지로 균형교양에 흡수)+균형교양21학점
+    private static final int BALANCE_MIN_AREAS = 0; // 20~23학번은 영역별 의무이수요건 없음(7과목 총 21학점만 충족하면 됨)
 
-    private static final Set<String> MSC_REQUIRED_SUBJECTS = Set.of(
-            "대학수학및연습1", "대학수학및연습2", "공학수학1",
-            "대학물리학1", "대학물리학2",
-            "C프로그래밍", "인공지능과컴퓨팅사고"
-    );
-    private static final Set<String> MSC_POOL_SUBJECTS = Set.of(
-            "대학수학및연습1", "대학수학및연습2", "공학수학1", "공학수학2",
-            "선형대수학", "이산수학", "벡터해석학및연습", "확률및통계", "수치해석", "확률및불규칙신호론",
-            "대학물리학1", "대학물리학2", "대학화학및실험1", "대학화학및실험2", "대학화학",
-            "C프로그래밍", "인공지능과컴퓨팅사고"
-    );
-    private static final int MSC_TOTAL_REQUIRED = 30;
+    private static final List<String> BALANCE_AREAS = List.of(
+            "언어와 표현", "과학과 기술", "인간과 철학", "사회와 경제",
+            "글로벌문화와 제2외국어", "예술과 체육", "수리와 자연", "대학실용영어");
 
-    private static final Map<String, Integer> DESIGN_CREDIT_MAP = Map.of(
-            "공학설계입문", 3,
-            "산학협력캡스톤설계1", 3,
-            "산학협력캡스톤설계2", 3
-    );
-    private static final int DESIGN_REQUIRED = 12;
+    private static final List<String> GRADUATION_PROJECT_OPTIONS = List.of("졸업논문", "졸업작품");
 
-    // ===== 컴퓨터정보공학부 전용 =====
-
-    // 전공 최소설계 필수: 공학설계입문 + 이산수학 (필수) + 캡스톤1 또는 2 (택1)
-    private static final Set<String> CE_DESIGN_MANDATORY = Set.of("공학설계입문", "이산수학");
-    private static final Set<String> CE_DESIGN_ONE_OF = Set.of("산학협력캡스톤설계1", "산학협력캡스톤설계2");
-
-    // ===== 정보융합학부 전용 =====
-
-    private static final Set<String> CAPSTONE_SUBJECTS = Set.of(
-            "졸업작품", "캡스톤디자인", "산학협력캡스톤설계1", "산학협력캡스톤설계2"
-    );
-
-    // ===== 소프트웨어학부 전용 =====
-
-    // 전공필수 4과목 (2024학번까지 적용)
-    private static final Set<String> SOFTWARE_REQUIRED_SUBJECTS = Set.of(
-            "자료구조", "자료구조실습", "알고리즘", "응용소프트웨어실습"
-    );
-    // 인공지능전공 세부전공필수 풀 (5개 중 3개 이상)
-    private static final Set<String> AI_TRACK_SUBJECTS = Set.of(
-            "인공지능", "빅데이터처리및응용", "컴퓨터비전", "기계학습", "딥러닝실습"
-    );
-    private static final int AI_TRACK_REQUIRED_COUNT = 3;
-    // 전공 최소설계 필수: 공학설계입문만
-    private static final Set<String> SW_DESIGN_MANDATORY = Set.of("공학설계입문");
-
-    public RequirementCheckResponse check(String department, RequirementCheckRequest req) {
+    public RequirementResponse get(String department) {
         return switch (department) {
-            case "정보융합학부" -> checkInfoConvergence(req);
-            case "컴퓨터정보공학부" -> checkComputerEngineering(req);
-            case "소프트웨어학부" -> checkSoftware(req);
+            case "jeongyung" -> jeongyung();
+            case "computer" -> computer();
+            case "software" -> software();
             default -> throw new IllegalArgumentException("지원하지 않는 학과입니다: " + department);
         };
     }
 
-    private RequirementCheckResponse checkInfoConvergence(RequirementCheckRequest req) {
-        CreditSummaryResponse c = req.creditSummary();
-        boolean capstoneDone = hasTakenAny(req.subjects(), CAPSTONE_SUBJECTS);
-        int majorRequired = req.isDoubleMajor() ? MAJOR_DOUBLE_REQUIRED : MAJOR_SINGLE_REQUIRED;
-
-        List<RequirementItem> items = new ArrayList<>(List.of(
-                RequirementItem.of("총 취득학점", c.chidukHakjum(), TOTAL_REQUIRED),
-                RequirementItem.of("전공 취득학점", c.majorChidukHakjum(), majorRequired),
-                RequirementItem.of("교양 취득학점", c.cultureChidukHakjum(), CULTURE_REQUIRED)
-        ));
-        items.add(new RequirementItem("캡스톤 이수", capstoneDone ? 1 : 0, 1, capstoneDone));
-
-        return RequirementCheckResponse.of(items);
+    private RequirementResponse jeongyung() {
+        return new RequirementResponse(
+                ADMISSION_YEAR, COLLEGE, "정보융합학부",
+                TOTAL_CREDIT, MAJOR_CREDIT, LIBERAL_ARTS_CREDIT, BALANCE_CREDIT,
+                BALANCE_MIN_AREAS, BALANCE_AREAS, List.of(),
+                List.of("인공지능과컴퓨팅사고"), false, GRADUATION_PROJECT_OPTIONS,
+                null, false, List.of(),
+                List.of(
+                        "캡스톤(졸업작품/캡스톤디자인/산학협력캡스톤설계1·2) 중 1개 이수 필요",
+                        "다전공 이수 시 전공학점 60→54학점으로 하향"));
     }
 
-    private RequirementCheckResponse checkComputerEngineering(RequirementCheckRequest req) {
-        CreditSummaryResponse c = req.creditSummary();
-        int majorRequired = req.isDoubleMajor() ? MAJOR_DOUBLE_REQUIRED : MAJOR_SINGLE_REQUIRED;
+    private RequirementResponse computer() {
+        EngineeringRequirement engineering = new EngineeringRequirement(
+                30,
+                List.of("대학수학및연습1", "대학수학및연습2", "공학수학1",
+                        "대학물리학1", "대학물리학2", "C프로그래밍", "인공지능과컴퓨팅사고"),
+                List.of(),
+                List.of("대학수학및연습1", "대학수학및연습2", "공학수학1", "공학수학2",
+                        "선형대수학", "이산수학", "벡터해석학및연습", "확률및통계", "수치해석", "확률및불규칙신호론",
+                        "대학물리학1", "대학물리학2", "대학화학및실험1", "대학화학및실험2", "대학화학",
+                        "C프로그래밍", "인공지능과컴퓨팅사고"),
+                List.of("공학설계입문", "이산수학"),
+                List.of("산학협력캡스톤설계1", "산학협력캡스톤설계2"));
 
-        List<RequirementItem> items = new ArrayList<>(List.of(
-                RequirementItem.of("전공 취득학점(설계 포함)", c.majorChidukHakjum(), majorRequired),
-                RequirementItem.of("교양 취득학점", c.cultureChidukHakjum(), CULTURE_REQUIRED)
-        ));
-
-        if (req.isEngineeringProgram()) {
-            boolean mscRequiredTaken = MSC_REQUIRED_SUBJECTS.stream()
-                    .allMatch(name -> hasTakenAny(req.subjects(), Set.of(name)));
-            int mscTotalCredit = sumCredit(req.subjects(), MSC_POOL_SUBJECTS);
-            int designCredit = sumDesignCredit(req.subjects());
-            boolean designMinimumOk = hasMinimumDesignRequirement(req.subjects(), CE_DESIGN_MANDATORY, CE_DESIGN_ONE_OF);
-
-            items.add(new RequirementItem("MSC 필수과목 7개 이수", mscRequiredTaken ? 1 : 0, 1, mscRequiredTaken));
-            items.add(RequirementItem.of("MSC 총 이수학점(30학점)", mscTotalCredit, MSC_TOTAL_REQUIRED));
-            items.add(RequirementItem.of("설계 학점", designCredit, DESIGN_REQUIRED));
-            items.add(new RequirementItem("전공 최소설계 필수과목(공학설계입문·이산수학·캡스톤1or2)", designMinimumOk ? 1 : 0, 1, designMinimumOk));
-        }
-        // 일반 프로그램: MSC·설계 요건 면제
-
-        return RequirementCheckResponse.of(items);
+        return new RequirementResponse(
+                ADMISSION_YEAR, COLLEGE, "컴퓨터정보공학부",
+                TOTAL_CREDIT, MAJOR_CREDIT, LIBERAL_ARTS_CREDIT, BALANCE_CREDIT,
+                BALANCE_MIN_AREAS, BALANCE_AREAS, List.of(),
+                List.of(), false, GRADUATION_PROJECT_OPTIONS,
+                engineering, true, List.of(),
+                List.of(
+                        "설계 12학점 포함 여부는 KLAS 성적표 비고란/공학인증 사이트로 확인 필요",
+                        "다전공 이수 시 전공학점 60→54학점으로 하향",
+                        "TOPCIT 필수 응시 대상인지 학과 확인 필요(기존 코드에는 소프트웨어학부 전용으로만 적용돼 있었음)"));
     }
 
-    private RequirementCheckResponse checkSoftware(RequirementCheckRequest req) {
-        CreditSummaryResponse c = req.creditSummary();
-        int majorRequired = req.isDoubleMajor() ? MAJOR_DOUBLE_REQUIRED : MAJOR_SINGLE_REQUIRED;
+    private RequirementResponse software() {
+        EngineeringRequirement engineering = new EngineeringRequirement(
+                12,
+                List.of("C프로그래밍", "인공지능과컴퓨팅사고"),
+                List.of(),
+                List.of("대학수학및연습1", "대학수학및연습2", "공학수학1", "공학수학2",
+                        "선형대수학", "이산수학", "벡터해석학및연습", "확률및통계", "수치해석", "확률및불규칙신호론",
+                        "대학물리학1", "대학물리학2", "대학화학및실험1", "대학화학및실험2", "대학화학",
+                        "C프로그래밍", "인공지능과컴퓨팅사고"),
+                List.of("공학설계입문", "이산수학"),
+                List.of("산학협력캡스톤설계1", "산학협력캡스톤설계2"));
 
-        List<RequirementItem> items = new ArrayList<>(List.of(
-                RequirementItem.of("전공 취득학점", c.majorChidukHakjum(), majorRequired),
-                RequirementItem.of("교양 취득학점", c.cultureChidukHakjum(), CULTURE_REQUIRED)
-        ));
+        List<SubMajorRequirement> subMajors = List.of(
+                new SubMajorRequirement("소프트웨어전공", List.of(), 0),
+                new SubMajorRequirement("인공지능전공",
+                        List.of("인공지능", "빅데이터처리및응용", "컴퓨터비전", "기계학습", "딥러닝실습"), 3));
 
-        // 1. 전공필수 4과목
-        boolean majorRequiredTaken = SOFTWARE_REQUIRED_SUBJECTS.stream()
-                .allMatch(name -> hasTakenAny(req.subjects(), Set.of(name)));
-        items.add(new RequirementItem("전공필수 4과목 이수", majorRequiredTaken ? 1 : 0, 1, majorRequiredTaken));
-
-        // 2. 세부전공필수 (세부전공에 따라 다름)
-        if ("인공지능전공".equals(req.subMajor())) {
-            int aiTakenCount = countTaken(req.subjects(), AI_TRACK_SUBJECTS);
-            items.add(RequirementItem.of("인공지능전공 세부필수(3과목 이상)", aiTakenCount, AI_TRACK_REQUIRED_COUNT));
-        }
-        // 소프트웨어전공은 해당사항 없음 -> 항목 추가 안 함
-
-        // 3. 졸업논문, 4. TOPCIT (KLAS 성적 데이터로 판별 불가 -> 외부 입력값 그대로 반영)
-        boolean topcit = Boolean.TRUE.equals(req.topcitPassed());
-        boolean thesis = Boolean.TRUE.equals(req.thesisPassed());
-        items.add(new RequirementItem("TOPCIT 응시", topcit ? 1 : 0, 1, topcit));
-        items.add(new RequirementItem("졸업논문 '가' 판정", thesis ? 1 : 0, 1, thesis));
-
-        // 5. 프로그램별 졸업이수요건 = 공학프로그램 요건(MSC 30학점 + 설계 12학점 + 공학설계입문)
-        if (req.isEngineeringProgram()) {
-            int mscTotalCredit = sumCredit(req.subjects(), MSC_POOL_SUBJECTS);
-            int designCredit = sumDesignCredit(req.subjects());
-            boolean designMinimumOk = hasMinimumDesignRequirement(req.subjects(), SW_DESIGN_MANDATORY, Set.of());
-
-            items.add(RequirementItem.of("MSC 총 이수학점(30학점)", mscTotalCredit, MSC_TOTAL_REQUIRED));
-            items.add(RequirementItem.of("설계 학점", designCredit, DESIGN_REQUIRED));
-            items.add(new RequirementItem("전공 최소설계 필수과목(공학설계입문)", designMinimumOk ? 1 : 0, 1, designMinimumOk));
-        }
-
-        return RequirementCheckResponse.of(items);
-    }
-
-    private boolean hasTakenAny(List<KlasSubjectGradeResponse> subjects, Set<String> names) {
-        if (subjects == null) return false;
-        return subjects.stream().anyMatch(s -> names.contains(s.gwamokKname()) && isPassed(s));
-    }
-
-    private int countTaken(List<KlasSubjectGradeResponse> subjects, Set<String> names) {
-        if (subjects == null) return 0;
-        return (int) subjects.stream()
-                .filter(s -> names.contains(s.gwamokKname()) && isPassed(s))
-                .map(KlasSubjectGradeResponse::gwamokKname)
-                .distinct()
-                .count();
-    }
-
-    private int sumCredit(List<KlasSubjectGradeResponse> subjects, Set<String> names) {
-        if (subjects == null) return 0;
-        return subjects.stream()
-                .filter(s -> names.contains(s.gwamokKname()) && isPassed(s))
-                .mapToInt(KlasSubjectGradeResponse::hakjumNum)
-                .sum();
-    }
-
-    private int sumDesignCredit(List<KlasSubjectGradeResponse> subjects) {
-        if (subjects == null) return 0;
-        return subjects.stream()
-                .filter(this::isPassed)
-                .mapToInt(s -> DESIGN_CREDIT_MAP.getOrDefault(s.gwamokKname(), 0))
-                .sum();
-    }
-
-    private boolean hasMinimumDesignRequirement(List<KlasSubjectGradeResponse> subjects,
-                                                Set<String> mandatorySubjects,
-                                                Set<String> oneOfSubjects) {
-        boolean mandatoryOk = mandatorySubjects.stream()
-                .allMatch(name -> hasTakenAny(subjects, Set.of(name)));
-        boolean oneOfOk = oneOfSubjects.isEmpty() || hasTakenAny(subjects, oneOfSubjects);
-        return mandatoryOk && oneOfOk;
-    }
-
-    private boolean isPassed(KlasSubjectGradeResponse s) {
-        return s.getGrade() != null && !s.getGrade().equals("F");
+        return new RequirementResponse(
+                ADMISSION_YEAR, COLLEGE, "소프트웨어학부",
+                TOTAL_CREDIT, MAJOR_CREDIT, LIBERAL_ARTS_CREDIT, BALANCE_CREDIT,
+                BALANCE_MIN_AREAS, BALANCE_AREAS, List.of(),
+                List.of(), false, GRADUATION_PROJECT_OPTIONS,
+                engineering, true, subMajors,
+                List.of(
+                        "전공필수 4과목(자료구조, 자료구조실습, 알고리즘, 응용소프트웨어실습) 이수 필요",
+                        "졸업논문(작품)은 '택1'이 아니라 '가' 판정 필수 요건임(graduationProjectOptions로는 이 뉘앙스 표현 안 됨)",
+                        "다전공 이수 시 전공학점 60→54학점으로 하향"));
     }
 }
