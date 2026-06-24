@@ -1,0 +1,21 @@
+### 2025·2026학번 졸업요건 조회 테스트 (로그인 불필요)
+### IntelliJ에서 각 요청 왼쪽의 ▶(Run) 버튼을 누르면 됩니다.
+### department: jeongyung(정보융합학부) | computer(컴퓨터정보공학부) | software(소프트웨어학부)
+
+### 1) 2025학번 정보융합학부 졸업요건
+GET http://localhost:8080/api/klas/requirements/2025/check?department=jeongyung
+
+### 2) 2025학번 컴퓨터정보공학부 졸업요건
+GET http://localhost:8080/api/klas/requirements/2025/check?department=computer
+
+### 3) 2025학번 소프트웨어학부 졸업요건
+GET http://localhost:8080/api/klas/requirements/2025/check?department=software
+
+### 4) 2026학번 정보융합학부 졸업요건
+GET http://localhost:8080/api/klas/requirements/2026/check?department=jeongyung
+
+### 5) 2026학번 컴퓨터정보공학부 졸업요건
+GET http://localhost:8080/api/klas/requirements/2026/check?department=computer
+
+### 6) 2026학번 소프트웨어학부 졸업요건
+GET http://localhost:8080/api/klas/requirements/2026/check?department=software
