@@ -4,8 +4,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
-
-import java.util.Map;
+import org.springframework.web.client.RestClientResponseException;
 
 @Component
 public class KlasGradeClient {
@@ -21,16 +20,46 @@ public class KlasGradeClient {
     }
 
     public String getSemesterGrades(String cookie) {
-        return restClient.post()
-                .uri("/std/cps/inqire/AtnlcScreSungjukInfo.do")
-                .contentType(MediaType.parseMediaType("application/json;charset=utf-8"))
-                .accept(MediaType.APPLICATION_JSON)
-                .header("X-Requested-With", "XMLHttpRequest")
-                .header(HttpHeaders.ORIGIN, "https://klas.kw.ac.kr")
-                .header(HttpHeaders.REFERER, "https://klas.kw.ac.kr/std/cps/inqire/AtnlcScreSungjukInfo.do")
-                .header(HttpHeaders.COOKIE, cookie)
-                .body(Map.of())
-                .retrieve()
-                .body(String.class);
+        try {
+            return restClient.post()
+                    .uri("/std/cps/inqire/AtnlcScreSungjukInfo.do")
+                    .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                    .accept(MediaType.ALL)
+                    .header(HttpHeaders.COOKIE, cookie)
+                    .header(HttpHeaders.USER_AGENT, "Mozilla/5.0")
+                    .header(HttpHeaders.ORIGIN, "https://klas.kw.ac.kr")
+                    .header(HttpHeaders.REFERER, "https://klas.kw.ac.kr/std/cps/inqire/AtnlcScreSungjukInfo.do")
+                    .header("X-Requested-With", "XMLHttpRequest")
+                    .body("")
+                    .retrieve()
+                    .body(String.class);
+
+        } catch (RestClientResponseException e) {
+            System.out.println("KLAS Semester Grades API Status = " + e.getStatusCode());
+            System.out.println("KLAS Semester Grades API Body = " + e.getResponseBodyAsString());
+            throw e;
+        }
+    }
+
+    public String getGradeSummary(String cookie) {
+        try {
+            return restClient.post()
+                    .uri("/std/cps/inqire/AtnlcScreSungjukTot.do")
+                    .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                    .accept(MediaType.ALL)
+                    .header(HttpHeaders.COOKIE, cookie)
+                    .header(HttpHeaders.USER_AGENT, "Mozilla/5.0")
+                    .header(HttpHeaders.ORIGIN, "https://klas.kw.ac.kr")
+                    .header(HttpHeaders.REFERER, "https://klas.kw.ac.kr/std/cps/inqire/AtnlcScreSungjukInfo.do")
+                    .header("X-Requested-With", "XMLHttpRequest")
+                    .body("")
+                    .retrieve()
+                    .body(String.class);
+
+        } catch (RestClientResponseException e) {
+            System.out.println("KLAS Grade Summary API Status = " + e.getStatusCode());
+            System.out.println("KLAS Grade Summary API Body = " + e.getResponseBodyAsString());
+            throw e;
+        }
     }
 }

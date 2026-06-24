@@ -1,4 +1,5 @@
 package com.example.kwu_graduation.global.config;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -16,9 +17,7 @@ public class SecurityConfig {
             "/swagger-ui.html"
     };
 
-    // KLAS 쿠키 기반으로 자체 인증 처리하는 API들 - Spring Security의 authenticated()가 아니라
-    // 컨트롤러/서비스에서 Klas-Cookie 헤더로 직접 검증하므로 여기서는 permitAll로 둔다.
-    private static final String[] KLAS_API_URLS = {
+    private static final String[] KLAS_URLS = {
             "/api/klas/**"
     };
 
