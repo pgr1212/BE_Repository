@@ -1,4 +1,5 @@
 package com.example.kwu_graduation.global.config;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -16,6 +17,9 @@ public class SecurityConfig {
             "/swagger-ui.html"
     };
 
+    private static final String[] KLAS_URLS = {
+            "/api/klas/**"
+    };
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -25,6 +29,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(SWAGGER_URLS).permitAll()
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        .requestMatchers(KLAS_URLS).permitAll()
                         .anyRequest().authenticated()
                 );
 
