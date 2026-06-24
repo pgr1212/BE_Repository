@@ -1,0 +1,10 @@
+{
+  "hakbun" : "20-23",
+  "departmentcode" : "Default",
+  "totalhakjum" : 130,
+  "majorhakjum" : 60,
+  "culturehakjum" : 30,
+  "etchakjum" : 0,
+  "requiredCourses" : ["캡스톤디자인"],
+  "manualChecks" : ["다음 학기 휴학 예정"]
+}
