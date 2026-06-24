@@ -1,25 +1,21 @@
-### 정융(정보융합학부) 25/26학번 졸업요건 조회 테스트
-### IntelliJ에서 각 요청 왼쪽의 ▶(Run) 버튼을 위에서부터 순서대로 누르세요.
-### 1번을 먼저 실행해야 쿠키가 저장되어 2,3번이 동작합니다.
+### 2025·2026학번 졸업요건 조회 테스트 (로그인 불필요)
+### IntelliJ에서 각 요청 왼쪽의 ▶(Run) 버튼을 누르면 됩니다.
+### department: jeongyung(정보융합학부) | computer(컴퓨터정보공학부) | software(소프트웨어학부)
 
-### 1) KLAS 로그인 → 쿠키 발급 (학번/비밀번호를 본인 것으로 바꾸세요)
-POST http://localhost:8080/api/klas/auth/login
-Content-Type: application/json
+### 1) 2025학번 정보융합학부 졸업요건
+GET http://localhost:8080/api/klas/requirements/2025/check?department=jeongyung
 
-{
-  "studentId": "아이디",
-  "password": "비밀번호"
-}
+### 2) 2025학번 컴퓨터정보공학부 졸업요건
+GET http://localhost:8080/api/klas/requirements/2025/check?department=computer
 
-> {%
-    client.global.set("klasCookie", response.body.cookie);
-    client.log("발급된 쿠키 = " + response.body.cookie);
-%}
+### 3) 2025학번 소프트웨어학부 졸업요건
+GET http://localhost:8080/api/klas/requirements/2025/check?department=software
 
-### 2) 2025학번 정융 졸업요건 조회
-GET http://localhost:8080/api/requirements/hakbun25?department=jeongyung
-Klas-Cookie: {{klasCookie}}
+### 4) 2026학번 정보융합학부 졸업요건
+GET http://localhost:8080/api/klas/requirements/2026/check?department=jeongyung
 
-### 3) 2026학번 정융 졸업요건 조회
-GET http://localhost:8080/api/requirements/hakbun26?department=jeongyung
-Klas-Cookie: {{klasCookie}}
+### 5) 2026학번 컴퓨터정보공학부 졸업요건
+GET http://localhost:8080/api/klas/requirements/2026/check?department=computer
+
+### 6) 2026학번 소프트웨어학부 졸업요건
+GET http://localhost:8080/api/klas/requirements/2026/check?department=software
