@@ -1,4 +1,4 @@
-package com.example.kwu_graduation.domain.requirements.hakbun24.dto;
+package com.example.kwu_graduation.domain.simulation.hakbun24.dto;
 
 /**
  * 성적(KLAS) 데이터만으로는 자동 판정이 불가능한 항목에 대한 사용자 자기보고 값.

@@ -1,4 +1,4 @@
-package com.example.kwu_graduation.domain.requirements.hakbun23.dto;
+package com.example.kwu_graduation.domain.simulation.hakbun23.dto;
 
 /**
  * 졸업요건 점검 결과의 한 항목(예: 총학점, 주전공, 균형교양 ...).

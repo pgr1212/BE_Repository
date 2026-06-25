@@ -1,15 +1,15 @@
-package com.example.kwu_graduation.domain.requirements.hakbun2526.engine;
+package com.example.kwu_graduation.domain.simulation.hakbun2526.engine;
 
 import com.example.kwu_graduation.domain.grade.dto.CreditSummaryResponse;
 import com.example.kwu_graduation.domain.grade.dto.KlasSubjectGradeResponse;
-import com.example.kwu_graduation.domain.requirements.hakbun2526.dto.CheckItem;
-import com.example.kwu_graduation.domain.requirements.hakbun2526.dto.CheckStatus;
-import com.example.kwu_graduation.domain.requirements.hakbun2526.dto.RequirementCheckRequest;
-import com.example.kwu_graduation.domain.requirements.hakbun2526.dto.RequirementCheckResponse;
-import com.example.kwu_graduation.domain.requirements.hakbun2526.spec.EngineeringProgram;
-import com.example.kwu_graduation.domain.requirements.hakbun2526.spec.GraduationRequirement;
-import com.example.kwu_graduation.domain.requirements.hakbun2526.spec.MscArea;
-import com.example.kwu_graduation.domain.requirements.hakbun2526.spec.SubMajorRequirement;
+import com.example.kwu_graduation.domain.simulation.hakbun2526.dto.CheckItem;
+import com.example.kwu_graduation.domain.simulation.hakbun2526.dto.CheckStatus;
+import com.example.kwu_graduation.domain.simulation.hakbun2526.dto.RequirementCheckRequest;
+import com.example.kwu_graduation.domain.simulation.hakbun2526.dto.RequirementCheckResponse;
+import com.example.kwu_graduation.domain.simulation.hakbun2526.spec.EngineeringProgram;
+import com.example.kwu_graduation.domain.simulation.hakbun2526.spec.GraduationRequirement;
+import com.example.kwu_graduation.domain.simulation.hakbun2526.spec.MscArea;
+import com.example.kwu_graduation.domain.simulation.hakbun2526.spec.SubMajorRequirement;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;

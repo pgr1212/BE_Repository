@@ -1,9 +1,9 @@
-package com.example.kwu_graduation.domain.requirements.hakbun23.controller;
+package com.example.kwu_graduation.domain.simulation.hakbun23.controller;
 
-import com.example.kwu_graduation.domain.requirements.hakbun23.dto.RequirementCheckRequest;
-import com.example.kwu_graduation.domain.requirements.hakbun23.dto.RequirementCheckResponse;
-import com.example.kwu_graduation.domain.requirements.hakbun23.service.RequirementService;
-import com.example.kwu_graduation.domain.requirements.hakbun23.spec.Department;
+import com.example.kwu_graduation.domain.simulation.hakbun23.dto.RequirementCheckRequest;
+import com.example.kwu_graduation.domain.simulation.hakbun23.dto.RequirementCheckResponse;
+import com.example.kwu_graduation.domain.simulation.hakbun23.service.RequirementService;
+import com.example.kwu_graduation.domain.simulation.hakbun23.spec.Department;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;

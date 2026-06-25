@@ -1,4 +1,4 @@
-package com.example.kwu_graduation.domain.requirements.hakbun23.dto;
+package com.example.kwu_graduation.domain.simulation.hakbun23.dto;
 
 import java.util.List;
 

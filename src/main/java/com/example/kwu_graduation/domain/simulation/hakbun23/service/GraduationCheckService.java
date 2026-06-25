@@ -1,16 +1,16 @@
-package com.example.kwu_graduation.domain.requirements.hakbun23.service;
+package com.example.kwu_graduation.domain.simulation.hakbun23.service;
 
 import com.example.kwu_graduation.domain.grade.dto.CreditSummaryResponse;
 import com.example.kwu_graduation.domain.grade.dto.KlasSemesterGradeResponse;
 import com.example.kwu_graduation.domain.grade.dto.KlasSubjectGradeResponse;
 import com.example.kwu_graduation.domain.grade.service.GradeCalculator;
 import com.example.kwu_graduation.domain.grade.service.KlasGradeService;
-import com.example.kwu_graduation.domain.requirements.hakbun23.dto.RequirementCheckRequest;
-import com.example.kwu_graduation.domain.requirements.hakbun23.dto.RequirementCheckResponse;
-import com.example.kwu_graduation.domain.requirements.hakbun23.engine.RequirementChecker;
-import com.example.kwu_graduation.domain.requirements.hakbun23.spec.Department;
-import com.example.kwu_graduation.domain.requirements.hakbun23.spec.GraduationRequirement;
-import com.example.kwu_graduation.domain.requirements.hakbun23.spec.RequirementSpecLoader;
+import com.example.kwu_graduation.domain.simulation.hakbun23.dto.RequirementCheckRequest;
+import com.example.kwu_graduation.domain.simulation.hakbun23.dto.RequirementCheckResponse;
+import com.example.kwu_graduation.domain.simulation.hakbun23.engine.RequirementChecker;
+import com.example.kwu_graduation.domain.simulation.hakbun23.spec.Department;
+import com.example.kwu_graduation.domain.simulation.hakbun23.spec.GraduationRequirement;
+import com.example.kwu_graduation.domain.simulation.hakbun23.spec.RequirementSpecLoader;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;

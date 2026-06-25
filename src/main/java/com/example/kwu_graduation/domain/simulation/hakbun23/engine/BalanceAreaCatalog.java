@@ -1,4 +1,4 @@
-package com.example.kwu_graduation.domain.requirements.hakbun23.engine;
+package com.example.kwu_graduation.domain.simulation.hakbun23.engine;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;

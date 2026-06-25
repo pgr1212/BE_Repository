@@ -1,5 +1,8 @@
 package com.example.kwu_graduation.domain.requirements.hakbun24.spec;
 
+import com.example.kwu_graduation.domain.simulation.hakbun24.spec.Department;
+import com.example.kwu_graduation.domain.simulation.hakbun24.spec.GraduationRequirement;
+import com.example.kwu_graduation.domain.simulation.hakbun24.spec.RequirementSpecLoader;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

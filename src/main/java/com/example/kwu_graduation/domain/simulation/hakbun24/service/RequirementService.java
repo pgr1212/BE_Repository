@@ -1,8 +1,8 @@
-package com.example.kwu_graduation.domain.requirements.hakbun24.service;
+package com.example.kwu_graduation.domain.simulation.hakbun24.service;
 
-import com.example.kwu_graduation.domain.requirements.hakbun24.dto.RequirementCheckRequest;
-import com.example.kwu_graduation.domain.requirements.hakbun24.dto.RequirementCheckResponse;
-import com.example.kwu_graduation.domain.requirements.hakbun24.spec.Department;
+import com.example.kwu_graduation.domain.simulation.hakbun24.dto.RequirementCheckRequest;
+import com.example.kwu_graduation.domain.simulation.hakbun24.dto.RequirementCheckResponse;
+import com.example.kwu_graduation.domain.simulation.hakbun24.spec.Department;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

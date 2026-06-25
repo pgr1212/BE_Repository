@@ -1,4 +1,4 @@
-package com.example.kwu_graduation.domain.requirements.hakbun24.dto;
+package com.example.kwu_graduation.domain.simulation.hakbun24.dto;
 
 /**
  * 개별 졸업요건 항목의 충족 상태.

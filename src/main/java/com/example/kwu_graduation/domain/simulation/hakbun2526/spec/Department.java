@@ -1,4 +1,4 @@
-package com.example.kwu_graduation.domain.requirements.hakbun2526.spec;
+package com.example.kwu_graduation.domain.simulation.hakbun2526.spec;
 
 import java.util.Arrays;
 
