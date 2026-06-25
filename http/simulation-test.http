@@ -1,0 +1,35 @@
+### 졸업 시뮬레이션 API 테스트
+### IntelliJ에서 각 요청 왼쪽의 Run 버튼을 위에서부터 순서대로 누르세요.
+### 1번을 먼저 실행해야 쿠키가 저장되어 2번이 동작합니다.
+
+### 1) KLAS 로그인 -> 쿠키 발급 (학번/비밀번호를 본인 것으로 바꾸세요)
+POST http://localhost:8080/api/klas/auth/login
+Content-Type: application/json
+
+{
+  "studentId": "아이디",
+  "password": "비밀번호"
+}
+
+> {%
+    client.global.set("klasCookie", response.body.cookie);
+    client.log("발급된 쿠키 = " + response.body.cookie);
+%}
+
+### 2) 졸업 시뮬레이션 실행
+POST http://localhost:8080/api/simulation
+Content-Type: application/json
+Klas-Cookie: {{klasCookie}}
+
+{
+  "admissionYear": 2025,
+  "department": "software",
+  "currentGradeYear": 4,
+  "currentSemester": 1,
+  "includeInProgressCourses": false,
+  "multiMajorCompleted": null,
+  "graduationProjectCompleted": null,
+  "engineeringProgram": null,
+  "topcitCompleted": null,
+  "subMajor": null
+}

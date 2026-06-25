@@ -21,21 +21,40 @@ public class GraduationCreditCalculator {
             List<KlasSemesterGradeResponse> semesters,
             boolean includeInProgressCourses
     ) {
-        CreditSummaryResponse summary = gradeCalculator.calculate(semesters == null ? List.of() : semesters);
+        CreditSummaryResponse summary = calculateCredits(semesters, includeInProgressCourses);
+        return new GraduationSummaryResponse(
+                summary.chidukHakjum(),
+                summary.majorChidukHakjum(),
+                summary.cultureChidukHakjum(),
+                summary.etcChidukHakjum()
+        );
+    }
+
+    public CreditSummaryResponse calculateCredits(
+            List<KlasSemesterGradeResponse> semesters,
+            boolean includeInProgressCourses
+    ) {
+        CreditSummaryResponse summary = gradeCalculator.calculate(normalizeSemesters(semesters));
         if (!includeInProgressCourses) {
-            return new GraduationSummaryResponse(
-                    summary.chidukHakjum(),
-                    summary.majorChidukHakjum(),
-                    summary.cultureChidukHakjum(),
-                    summary.etcChidukHakjum()
-            );
+            return summary;
         }
 
-        return new GraduationSummaryResponse(
+        return new CreditSummaryResponse(
+                0,
+                0,
+                0,
+                0,
                 summary.chidukHakjum() + summary.applyHakjum(),
                 summary.majorChidukHakjum() + summary.majorApplyHakjum(),
                 summary.cultureChidukHakjum() + summary.cultureApplyHakjum(),
-                summary.etcChidukHakjum() + summary.etcApplyHakjum()
+                summary.etcChidukHakjum() + summary.etcApplyHakjum(),
+                summary.delHakjum(),
+                summary.majorDelHakjum(),
+                summary.cultureDelHakjum(),
+                summary.etcDelHakjum(),
+                0,
+                summary.retakeChidukHakjum() + summary.retakeApplyHakjum(),
+                summary.retakeDelHakjum()
         );
     }
 
@@ -69,6 +88,22 @@ public class GraduationCreditCalculator {
 
     private List<KlasSemesterGradeResponse> safeSemesters(List<KlasSemesterGradeResponse> semesters) {
         return semesters == null ? List.of() : semesters;
+    }
+
+    private List<KlasSemesterGradeResponse> normalizeSemesters(List<KlasSemesterGradeResponse> semesters) {
+        return safeSemesters(semesters).stream()
+                .map(semester -> {
+                    if (semester == null) {
+                        return new KlasSemesterGradeResponse(null, null, null, List.of());
+                    }
+                    return new KlasSemesterGradeResponse(
+                            semester.thisYear(),
+                            semester.hakgi(),
+                            semester.hakgiOrder(),
+                            safeSubjects(semester)
+                    );
+                })
+                .toList();
     }
 
     private List<KlasSubjectGradeResponse> safeSubjects(KlasSemesterGradeResponse semester) {

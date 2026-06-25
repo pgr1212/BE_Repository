@@ -1,6 +1,8 @@
 package com.example.kwu_graduation.domain.simulation.service;
 
 import com.example.kwu_graduation.domain.grade.dto.KlasSemesterGradeResponse;
+import com.example.kwu_graduation.domain.requirements.hakbun2526.dto.CheckItem;
+import com.example.kwu_graduation.domain.requirements.hakbun2526.dto.CheckStatus;
 import com.example.kwu_graduation.domain.simulation.dto.GraduationSummaryResponse;
 import com.example.kwu_graduation.domain.simulation.dto.RequirementGapResponse;
 import com.example.kwu_graduation.domain.simulation.model.GraduationRequirement;
@@ -17,7 +19,23 @@ import java.util.List;
 @RequiredArgsConstructor
 public class RequirementGapCalculator {
 
+    private static final int DEFAULT_REQUIRED_COURSE_CREDIT = 3;
+
     private final GraduationCreditCalculator creditCalculator;
+
+    public List<RequirementGapResponse> calculate(List<CheckItem> checkItems) {
+        if (checkItems == null || checkItems.isEmpty()) {
+            return List.of();
+        }
+
+        List<RequirementGapResponse> gaps = new ArrayList<>();
+        for (CheckItem item : checkItems) {
+            toGap(item).stream()
+                    .filter(gap -> !gap.satisfied())
+                    .forEach(gaps::add);
+        }
+        return gaps;
+    }
 
     public List<RequirementGapResponse> calculate(
             GraduationRequirement requirement,
@@ -66,6 +84,55 @@ public class RequirementGapCalculator {
         }
 
         return gaps;
+    }
+
+    private java.util.Optional<RequirementGapResponse> toGap(CheckItem item) {
+        if (item == null || item.status() != CheckStatus.INSUFFICIENT) {
+            return java.util.Optional.empty();
+        }
+
+        String type = gapType(item);
+        if (type == null) {
+            return java.util.Optional.empty();
+        }
+
+        int remaining = remainingOf(item, type);
+        if (remaining <= 0) {
+            return java.util.Optional.empty();
+        }
+
+        int required = Math.max(item.required(), remaining);
+        int completed = Math.max(required - remaining, 0);
+        return java.util.Optional.of(new RequirementGapResponse(
+                type,
+                item.name(),
+                required,
+                completed,
+                remaining,
+                false
+        ));
+    }
+
+    private String gapType(CheckItem item) {
+        return switch (item.name()) {
+            case "졸업 총 이수학점" -> "TOTAL_CREDIT";
+            case "주전공(필수 포함)" -> "MAJOR_CREDIT";
+            case "교양 총 이수학점" -> "CULTURE_CREDIT";
+            case "균형교양 이수학점" -> "REQUIRED_AREA";
+            default -> {
+                if (item.name() != null && item.name().startsWith("필수교양 - ")) {
+                    yield "REQUIRED_COURSE";
+                }
+                yield null;
+            }
+        };
+    }
+
+    private int remainingOf(CheckItem item, String type) {
+        if ("REQUIRED_COURSE".equals(type) && item.lack() <= 0) {
+            return DEFAULT_REQUIRED_COURSE_CREDIT;
+        }
+        return item.lack();
     }
 
     private void addCreditGap(List<RequirementGapResponse> gaps, String type, String name, int required, int completed) {

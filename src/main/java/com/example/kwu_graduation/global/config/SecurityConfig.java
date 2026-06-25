@@ -21,6 +21,10 @@ public class SecurityConfig {
             "/api/klas/**"
     };
 
+    private static final String[] SIMULATION_URLS = {
+            "/api/simulation"
+    };
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -30,6 +34,7 @@ public class SecurityConfig {
                         .requestMatchers(SWAGGER_URLS).permitAll()
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers(KLAS_URLS).permitAll()
+                        .requestMatchers(SIMULATION_URLS).permitAll()
                         .anyRequest().authenticated()
                 );
 
