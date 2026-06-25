@@ -1,0 +1,58 @@
+name: Spring Boot CI/CD without CodeDeploy
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. 저장소 코드 가져오기 (v3 -> v4로 최신화)
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      # 2. JDK 17 세팅 (기존 설정 유지)
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      # 3. 시크릿에서 application.yml 파일 생성 (기존 설정 유지)
+      - name: Create application.yml
+        run: |
+          mkdir -p src/main/resources
+          echo "${{ secrets.APPLICATION_YML }}" > src/main/resources/application.yml
+
+      # 4. Gradle 실행 권한 부여 & 빌드
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Build with Gradle
+        run: ./gradlew clean build --exclude-task test
+
+      # 5. SCP로 빌드된 JAR 파일을 EC2로 직접 전송 (추가됨)
+      - name: Copy JAR to EC2
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.KEY }}
+          source: "build/libs/*SNAPSHOT.jar" # 빌드된 jar 파일 경로
+          target: "/home/ubuntu/my-app"      # EC2 내부 복사할 위치
+          strip_components: 2                # 저장 시 'build/libs/' 폴더 구조 생략
+
+      # 6. SSH로 EC2에 접속해서 deploy.sh 실행 (추가됨)
+      - name: Execute Deploy Script on EC2
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.KEY }}
+          script: |
+            cd /home/ubuntu/my-app
+            ./deploy.sh
