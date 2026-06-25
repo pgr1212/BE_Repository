@@ -1,0 +1,29 @@
+{
+  "admissionYear": 2024,
+  "college": "인공지능융합대학",
+  "department": "정보융합학부",
+  "totalCredit": 133,
+  "majorCredit": 60,
+  "liberalArtsCredit": 31,
+  "balanceCredit": 30,
+  "balanceMinAreas": 0,
+  "balanceAreas": [
+    "언어와 표현",
+    "과학과 기술",
+    "인간과 철학",
+    "사회와 경제",
+    "글로벌문화와 제2외국어",
+    "예술과 체육",
+    "수리와 자연",
+    "대학실용영어"
+  ],
+  "balanceMandatoryAreasAnyOf": [],
+  "requiredLiberalCourses": [],
+  "multiMajorRequired": false,
+  "graduationProjectOptions": ["졸업논문", "졸업작품"],
+  "additionalRequirements": [
+    "균형교양 30학점은 8영역 중 10과목 x 3학점으로 이수합니다(영역별 의무 이수요건 없음).",
+    "필수교양 '광운인되기'(1학점)는 폐지되어 미이수해도 되나, 미이수 시 균형교양에 교양선택 과목을 추가 이수해 총 교양 31학점을 충족해야 합니다.",
+    "주전공은 필수 포함 60학점(다전공 이수 시 54학점)을 이수합니다."
+  ]
+}

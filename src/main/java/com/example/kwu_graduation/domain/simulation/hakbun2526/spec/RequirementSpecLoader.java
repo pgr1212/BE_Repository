@@ -20,8 +20,20 @@ public class RequirementSpecLoader {
     private final Map<String, GraduationRequirement> cache = new ConcurrentHashMap<>();
 
     public GraduationRequirement load(int admissionYear, Department department) {
-        String path = "requirements/hakbun2526/hakbun%d/%s.json".formatted(admissionYear % 100, department.getCode());
+        String path = resolvePath(admissionYear, department);
         return cache.computeIfAbsent(path, this::read);
+    }
+
+    /**
+     * 학번에 맞는 졸업요건 JSON 경로를 만든다.
+     * 25·26학번은 hakbun2526/hakbun{yy}/, 그 이전(23·24학번)은 hakbun{yy}/ 에 위치한다.
+     */
+    private String resolvePath(int admissionYear, Department department) {
+        String code = department.getCode();
+        return switch (admissionYear) {
+            case 2025, 2026 -> "requirements/hakbun2526/hakbun%d/%s.json".formatted(admissionYear % 100, code);
+            default -> "requirements/hakbun%d/%s.json".formatted(admissionYear % 100, code);
+        };
     }
 
     private GraduationRequirement read(String path) {

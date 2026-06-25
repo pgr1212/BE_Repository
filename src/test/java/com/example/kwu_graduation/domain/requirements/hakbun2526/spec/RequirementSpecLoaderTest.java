@@ -38,6 +38,29 @@ class RequirementSpecLoaderTest {
     }
 
     @Test
+    @DisplayName("2024 소프트 요건 JSON이 hakbun24 경로에서 로딩된다")
+    void load2024() {
+        GraduationRequirement spec = loader.load(2024, Department.SOFTWARE);
+
+        assertEquals(2024, spec.admissionYear());
+        assertEquals("소프트웨어학부", spec.department());
+        assertEquals(133, spec.totalCredit());
+        assertEquals(60, spec.majorCredit());
+        assertEquals(31, spec.liberalArtsCredit());
+    }
+
+    @Test
+    @DisplayName("2023 소프트 요건 JSON이 hakbun23 경로에서 로딩된다")
+    void load2023() {
+        GraduationRequirement spec = loader.load(2023, Department.SOFTWARE);
+
+        assertEquals(2023, spec.admissionYear());
+        assertEquals(133, spec.totalCredit());
+        assertEquals(60, spec.majorCredit());
+        assertEquals(19, spec.liberalArtsCredit());
+    }
+
+    @Test
     @DisplayName("컴퓨터정보공학부 요건 JSON(25·26)이 로딩되고 학과별 추가 요건을 포함한다")
     void loadComputer() {
         GraduationRequirement spec25 = loader.load(2025, Department.COMPUTER);

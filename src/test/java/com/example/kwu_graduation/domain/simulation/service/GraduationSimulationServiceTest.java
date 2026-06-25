@@ -61,7 +61,7 @@ class GraduationSimulationServiceTest {
 
         ResponseStatusException exception = assertThrows(ResponseStatusException.class, () ->
                 service.simulate("cookie", new GraduationSimulationRequest(
-                        2024,
+                        2022,
                         "software",
                         4,
                         1,

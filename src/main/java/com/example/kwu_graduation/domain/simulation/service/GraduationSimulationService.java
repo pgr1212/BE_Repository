@@ -72,8 +72,8 @@ public class GraduationSimulationService {
         if (request == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "요청 본문은 필수입니다.");
         }
-        if (request.admissionYear() != 2025 && request.admissionYear() != 2026) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "admissionYear는 2025 또는 2026이어야 합니다.");
+        if (request.admissionYear() < 2023 || request.admissionYear() > 2026) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "admissionYear는 2023~2026이어야 합니다.");
         }
         if (request.department() == null || request.department().isBlank()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "department는 필수입니다.");
