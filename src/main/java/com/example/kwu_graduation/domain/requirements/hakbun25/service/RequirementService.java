@@ -1,4 +1,4 @@
-package com.example.kwu_graduation.domain.requirements.hakbun26.service;
+package com.example.kwu_graduation.domain.requirements.hakbun25.service;
 
 import com.example.kwu_graduation.domain.requirements.hakbun25.dto.EngineeringRequirement;
 import com.example.kwu_graduation.domain.requirements.hakbun25.dto.MscArea;
@@ -9,34 +9,26 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 /**
- * 2026학번 졸업요건 조회. 2025학번과 응답 형태(DTO)는 공유하되, 다음 값이 다르다.
- * - 교양 총 이수학점 33학점(2025: 31학점)
- * - 균형교양 9영역(기초학문융합 추가) 중 "인간과 철학"·"사회와 경제" 영역 필수 포함
- * - 필수교양 'AI리터러시' 추가
+ * 2025학번 졸업요건 조회. 학사 정책 값을 그대로 상수로 담아 학과별로 내려준다.
  * department: jeongyung(정보융합학부) | computer(컴퓨터정보공학부) | software(소프트웨어학부)
  */
-@Service("requirementService2026")
+@Service("requirementService2025")
 public class RequirementService {
 
-    private static final int ADMISSION_YEAR = 2026;
+    private static final int ADMISSION_YEAR = 2025;
     private static final String COLLEGE = "인공지능융합대학";
 
     // 학점 요건(세 학과 공통)
     private static final int TOTAL_CREDIT = 133;
     private static final int MAJOR_CREDIT = 45;
-    private static final int LIBERAL_ARTS_CREDIT = 33;
+    private static final int LIBERAL_ARTS_CREDIT = 31;
     private static final int BALANCE_CREDIT = 30;
     private static final int BALANCE_MIN_AREAS = 4;
 
-    // 2026학번 균형교양 9영역(기초학문융합 추가)
+    // 2025학번 균형교양 8영역
     private static final List<String> BALANCE_AREAS = List.of(
             "언어와 표현", "과학과 기술", "인간과 철학", "사회와 경제",
-            "글로벌문화와 제2외국어", "예술과 체육", "수리와 자연", "기초학문융합", "대학실용영어");
-
-    // 이 중 최소 1개 영역은 반드시 포함
-    private static final List<String> BALANCE_MANDATORY_ANY_OF = List.of("인간과 철학", "사회와 경제");
-
-    private static final List<String> REQUIRED_LIBERAL_COURSES = List.of("AI리터러시");
+            "글로벌문화와 제2외국어", "예술과 체육", "수리와 자연", "대학실용영어");
 
     private static final List<String> GRADUATION_PROJECT_OPTIONS = List.of("졸업논문", "졸업작품");
 
@@ -53,8 +45,8 @@ public class RequirementService {
         return new RequirementResponse(
                 ADMISSION_YEAR, COLLEGE, "정보융합학부",
                 TOTAL_CREDIT, MAJOR_CREDIT, LIBERAL_ARTS_CREDIT, BALANCE_CREDIT,
-                BALANCE_MIN_AREAS, BALANCE_AREAS, BALANCE_MANDATORY_ANY_OF,
-                REQUIRED_LIBERAL_COURSES, true, GRADUATION_PROJECT_OPTIONS,
+                BALANCE_MIN_AREAS, BALANCE_AREAS, List.of(),
+                List.of(), true, GRADUATION_PROJECT_OPTIONS,
                 null, false, List.of(), List.of());
     }
 
@@ -74,8 +66,8 @@ public class RequirementService {
         return new RequirementResponse(
                 ADMISSION_YEAR, COLLEGE, "컴퓨터정보공학부",
                 TOTAL_CREDIT, MAJOR_CREDIT, LIBERAL_ARTS_CREDIT, BALANCE_CREDIT,
-                BALANCE_MIN_AREAS, BALANCE_AREAS, BALANCE_MANDATORY_ANY_OF,
-                REQUIRED_LIBERAL_COURSES, true, GRADUATION_PROJECT_OPTIONS,
+                BALANCE_MIN_AREAS, BALANCE_AREAS, List.of(),
+                List.of(), true, GRADUATION_PROJECT_OPTIONS,
                 engineering, false, List.of(),
                 List.of(
                         "설계 12학점 이수 여부는 공학인증 사이트에서 확인 (https://ce.kw.ac.kr/engineering_certify/subject_info.php)",
@@ -110,8 +102,8 @@ public class RequirementService {
         return new RequirementResponse(
                 ADMISSION_YEAR, COLLEGE, "소프트웨어학부",
                 TOTAL_CREDIT, MAJOR_CREDIT, LIBERAL_ARTS_CREDIT, BALANCE_CREDIT,
-                BALANCE_MIN_AREAS, BALANCE_AREAS, BALANCE_MANDATORY_ANY_OF,
-                REQUIRED_LIBERAL_COURSES, true, GRADUATION_PROJECT_OPTIONS,
+                BALANCE_MIN_AREAS, BALANCE_AREAS, List.of(),
+                List.of(), true, GRADUATION_PROJECT_OPTIONS,
                 engineering, true, subMajors,
                 List.of("설계 12학점 이수 여부는 공학인증 사이트에서 확인 (https://cs.kw.ac.kr/engineering_certify/subject.php)"));
     }
