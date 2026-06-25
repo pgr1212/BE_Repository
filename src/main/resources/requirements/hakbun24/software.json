@@ -1,0 +1,78 @@
+{
+  "admissionYear": 2024,
+  "college": "인공지능융합대학",
+  "department": "소프트웨어학부",
+  "totalCredit": 133,
+  "majorCredit": 60,
+  "liberalArtsCredit": 31,
+  "balanceCredit": 30,
+  "balanceMinAreas": 0,
+  "balanceAreas": [
+    "언어와 표현",
+    "과학과 기술",
+    "인간과 철학",
+    "사회와 경제",
+    "글로벌문화와 제2외국어",
+    "예술과 체육",
+    "수리와 자연",
+    "대학실용영어"
+  ],
+  "balanceMandatoryAreasAnyOf": [],
+  "requiredLiberalCourses": [],
+  "multiMajorRequired": false,
+  "graduationProjectOptions": ["졸업논문", "졸업작품"],
+  "engineering": {
+    "mscCredit": 18,
+    "mscRequiredCourses": ["C프로그래밍", "스마트사회와인공지능"],
+    "mscAreas": [
+      {
+        "name": "수학",
+        "minCredit": 6,
+        "courses": [
+          "대학수학및연습1", "대학수학및연습2", "공학수학1", "공학수학2",
+          "선형대수학", "벡터해석학및연습", "확률및통계", "확률및불규칙신호론"
+        ]
+      },
+      {
+        "name": "기초과학",
+        "minCredit": 3,
+        "courses": [
+          "대학물리학1", "대학물리학2", "대학화학및실험1", "대학화학및실험2",
+          "대학물리및실험1", "대학물리및실험2", "대학화학"
+        ]
+      },
+      {
+        "name": "공학기초",
+        "minCredit": 6,
+        "courses": ["C프로그래밍", "스마트사회와인공지능"]
+      }
+    ],
+    "mscPoolCourses": [
+      "대학수학및연습1", "대학수학및연습2", "공학수학1", "공학수학2",
+      "선형대수학", "벡터해석학및연습", "확률및통계", "확률및불규칙신호론",
+      "대학물리학1", "대학물리학2", "대학화학및실험1", "대학화학및실험2",
+      "대학물리및실험1", "대학물리및실험2", "대학화학",
+      "C프로그래밍", "스마트사회와인공지능"
+    ],
+    "requiredCourses": ["공학설계입문", "이산수학"],
+    "requiredCoursesOneOf": ["산학협력캡스톤설계1", "산학협력캡스톤설계2", "산학협력캡스톤설계"]
+  },
+  "topcitRequired": true,
+  "subMajors": [
+    {
+      "name": "소프트웨어전공",
+      "requiredCourses": [],
+      "requiredCount": 0
+    },
+    {
+      "name": "인공지능전공",
+      "requiredCourses": ["인공지능", "빅데이터처리및응용", "컴퓨터비전", "기계학습", "딥러닝실습"],
+      "requiredCount": 3
+    }
+  ],
+  "additionalRequirements": [
+    "MSC는 수학·기초과학·전산학(정보) 영역에서 필수과목을 포함하여 최소 12학점 이상(수학 6학점·기초과학 3학점 포함) 이수해야 합니다.",
+    "균형교양 30학점은 8영역 중 10과목 x 3학점으로 이수합니다(영역별 의무 이수요건 없음).",
+    "설계 12학점 이수 여부는 공학인증 사이트에서 확인 (https://cs.kw.ac.kr/engineering_certify/subject.php)"
+  ]
+}
