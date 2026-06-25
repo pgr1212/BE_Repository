@@ -1,0 +1,28 @@
+{
+  "admissionYear": 2023,
+  "college": "인공지능융합대학",
+  "department": "정보융합학부",
+  "totalCredit": 133,
+  "majorCredit": 60,
+  "liberalArtsCredit": 22,
+  "balanceCredit": 21,
+  "balanceMinAreas": 0,
+  "balanceAreas": [
+    "언어와 표현",
+    "과학과 기술",
+    "인간과 철학",
+    "사회와 경제",
+    "글로벌문화와 제2외국어",
+    "예술과 체육",
+    "대학실용영어"
+  ],
+  "balanceMandatoryAreasAnyOf": [],
+  "requiredLiberalCourses": [],
+  "multiMajorRequired": false,
+  "graduationProjectOptions": ["졸업논문", "졸업작품"],
+  "additionalRequirements": [
+    "균형교양 21학점은 7영역 중 7과목 x 3학점으로 이수합니다(영역별 의무 이수요건 없음).",
+    "수리와자연(구. 기초교양) 12학점을 균형교양과 별도로 이수해야 합니다(기초교양필수: 대학수학및연습1 포함).",
+    "주전공은 필수 포함 60학점(26학년도부터 전공필수 없음)을 이수하며 캡스톤(졸업작품)이 필수입니다."
+  ]
+}

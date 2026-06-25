@@ -1,0 +1,48 @@
+{
+  "admissionYear": 2023,
+  "college": "인공지능융합대학",
+  "department": "컴퓨터정보공학부",
+  "totalCredit": 133,
+  "majorCredit": 60,
+  "liberalArtsCredit": 19,
+  "balanceCredit": 18,
+  "balanceMinAreas": 0,
+  "balanceAreas": [
+    "언어와 표현",
+    "과학과 기술",
+    "인간과 철학",
+    "사회와 경제",
+    "글로벌문화와 제2외국어",
+    "예술과 체육",
+    "대학실용영어"
+  ],
+  "balanceMandatoryAreasAnyOf": [],
+  "requiredLiberalCourses": [],
+  "multiMajorRequired": false,
+  "graduationProjectOptions": ["졸업논문", "졸업작품"],
+  "engineering": {
+    "mscCredit": 30,
+    "mscRequiredCourses": [
+      "대학수학및연습1", "대학수학및연습2", "공학수학1",
+      "대학물리학1", "대학화학및실험1", "C프로그래밍", "스마트사회와인공지능"
+    ],
+    "mscAreas": [],
+    "mscPoolCourses": [
+      "대학수학및연습1", "대학수학및연습2", "공학수학1", "공학수학2",
+      "선형대수학", "벡터해석학및연습", "확률및통계", "확률및불규칙신호론",
+      "대학물리학1", "대학물리학2", "대학화학및실험1", "대학화학및실험2", "대학화학",
+      "C프로그래밍", "스마트사회와인공지능"
+    ],
+    "requiredCourses": ["공학설계입문", "수치해석"],
+    "requiredCoursesOneOf": ["산학협력캡스톤설계", "산학협력캡스톤설계1", "산학협력캡스톤설계2"]
+  },
+  "topcitRequired": false,
+  "subMajors": [],
+  "additionalRequirements": [
+    "MSC 30학점(수학·기초과학·전산학 영역 필수과목 포함)을 이수해야 합니다.",
+    "공학프로그램 기준 균형교양 18학점(7영역 중 6과목 x 3학점)입니다. 일반프로그램 선택 시 균형교양 21학점(7영역 중 7과목)입니다.",
+    "수리와자연(구. 기초교양) 12학점을 균형교양과 별도로 이수해야 합니다.",
+    "설계 12학점 이수 여부는 공학인증 사이트에서 확인 (https://ce.kw.ac.kr/engineering_certify/subject_info.php)",
+    "세부전공: 공통 포함 총 30학점 이수 (본인 세부전공 2과목 이상 + 타 세부전공 1과목 이상). 세부전공: 지능컴퓨팅시스템전공 / 지능정보전공"
+  ]
+}
